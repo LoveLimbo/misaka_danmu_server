@@ -180,8 +180,12 @@ from .source import (
     get_incremental_refresh_sources_grouped,
     batch_toggle_incremental_refresh,
     batch_set_favorite,
+    batch_unset_favorite,
     split_source_episodes,
     get_source_episode_list,
+    toggle_source_finished,
+    batch_set_finished,
+    batch_unset_finished,
 )
 
 # Danmaku模块

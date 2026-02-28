@@ -11,6 +11,9 @@ import {
   batchUnsetFavorite,
   toggleSourceIncremental,
   toggleSourceFavorite,
+  toggleSourceFinished,
+  batchSetSourceFinished,
+  batchUnsetSourceFinished,
   deleteAnimeSource,
 } from '../apis'
 import dayjs from 'dayjs'
@@ -203,6 +206,28 @@ export const IncrementalRefreshModal = ({ open, onCancel, onSuccess }) => {
     }
   }
 
+  // 切换单个源的完结状态（本地乐观更新）
+  const handleToggleFinished = async (sourceId) => {
+    const group = animeGroups.find(g => g.sources.some(s => s.sourceId === sourceId))
+    if (!group) return
+    const source = group.sources.find(s => s.sourceId === sourceId)
+    const newState = !source.isFinished
+
+    setAnimeGroups(prev => prev.map(g => ({
+      ...g,
+      sources: g.sources.map(s =>
+        s.sourceId === sourceId ? { ...s, isFinished: newState } : s
+      )
+    })))
+
+    try {
+      await toggleSourceFinished({ sourceId })
+    } catch (error) {
+      message.error('操作失败: ' + error.message)
+      fetchData()
+    }
+  }
+
   // 批量开启追更
   const handleBatchEnableRefresh = async () => {
     if (selectedSourceIds.length === 0) {
@@ -270,6 +295,44 @@ export const IncrementalRefreshModal = ({ open, onCancel, onSuccess }) => {
     try {
       await batchUnsetFavorite({ sourceIds: selectedSourceIds })
       message.success('批量取消标记成功')
+      setSelectedSourceIds([])
+      fetchData()
+    } catch (error) {
+      message.error('操作失败: ' + error.message)
+    } finally {
+      setOperationLoading(false)
+    }
+  }
+
+  // 批量标记完结
+  const handleBatchSetFinished = async () => {
+    if (selectedSourceIds.length === 0) {
+      message.warning('请先选择源')
+      return
+    }
+    setOperationLoading(true)
+    try {
+      await batchSetSourceFinished({ sourceIds: selectedSourceIds })
+      message.success('批量标记完结成功')
+      setSelectedSourceIds([])
+      fetchData()
+    } catch (error) {
+      message.error('操作失败: ' + error.message)
+    } finally {
+      setOperationLoading(false)
+    }
+  }
+
+  // 批量取消完结
+  const handleBatchUnsetFinished = async () => {
+    if (selectedSourceIds.length === 0) {
+      message.warning('请先选择源')
+      return
+    }
+    setOperationLoading(true)
+    try {
+      await batchUnsetSourceFinished({ sourceIds: selectedSourceIds })
+      message.success('批量取消完结成功')
       setSelectedSourceIds([])
       fetchData()
     } catch (error) {
@@ -395,6 +458,9 @@ export const IncrementalRefreshModal = ({ open, onCancel, onSuccess }) => {
           {source.isFavorited && (
             <Tag color="gold" size="small">★ 已标记</Tag>
           )}
+          {source.isFinished && (
+            <Tag color="default" size="small">已完结</Tag>
+          )}
         </div>
         {source.lastRefreshLatestEpisodeAt && (
           <div className="text-xs text-gray-400 mt-1">
@@ -414,6 +480,12 @@ export const IncrementalRefreshModal = ({ open, onCancel, onSuccess }) => {
           unCheckedChildren="标记"
           checked={source.isFavorited}
           onChange={() => handleToggleFavorite(source.sourceId)}
+        />
+        <Switch
+          checkedChildren="完结"
+          unCheckedChildren="完结"
+          checked={source.isFinished}
+          onChange={() => handleToggleFinished(source.sourceId)}
         />
       </Space>
     </div>
@@ -656,6 +728,20 @@ export const IncrementalRefreshModal = ({ open, onCancel, onSuccess }) => {
                   批量标记 <DownOutlined />
                 </Button>
               </Dropdown>
+              <Dropdown
+                menu={{
+                  items: [
+                    { key: 'set', label: '批量完结', onClick: handleBatchSetFinished, disabled: selectedSourceIds.length === 0 },
+                    { key: 'unset', label: '批量取消', onClick: handleBatchUnsetFinished, disabled: selectedSourceIds.length === 0 },
+                  ],
+                }}
+                trigger={['click']}
+                disabled={operationLoading}
+              >
+                <Button size="small" loading={operationLoading} className="flex-1">
+                  批量完结 <DownOutlined />
+                </Button>
+              </Dropdown>
             </div>
           </div>
         ) : (
@@ -700,6 +786,20 @@ export const IncrementalRefreshModal = ({ open, onCancel, onSuccess }) => {
             >
               <Button size="small" loading={operationLoading}>
                 批量标记 <DownOutlined />
+              </Button>
+            </Dropdown>
+            <Dropdown
+              menu={{
+                items: [
+                  { key: 'set', label: '批量完结', onClick: handleBatchSetFinished, disabled: selectedSourceIds.length === 0 },
+                  { key: 'unset', label: '批量取消', onClick: handleBatchUnsetFinished, disabled: selectedSourceIds.length === 0 },
+                ],
+              }}
+              trigger={['click']}
+              disabled={operationLoading}
+            >
+              <Button size="small" loading={operationLoading}>
+                批量完结 <DownOutlined />
               </Button>
             </Dropdown>
             <Button
