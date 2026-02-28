@@ -76,8 +76,6 @@ from .danmaku_color import (
     apply_random_color,
     parse_palette,
     apply_repeat_highlight,
-    DEFAULT_REPEAT_HIGHLIGHT_COLOR,
-    DEFAULT_REPEAT_HIGHLIGHT_MIN_COUNT,
 )
 
 # 弹幕过滤
