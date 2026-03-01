@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, Row, Col, Statistic, Button, Select, message, Spin, Empty } from 'antd'
 import { ReloadOutlined, DeleteOutlined, DownloadOutlined } from '@ant-design/icons'
 import { getAIMetrics, clearAICache } from '@/apis'
-import MyIcon from '@/components/MyIcon'
+import { MyIcon } from '@/components/MyIcon'
 
 const { Option } = Select
 

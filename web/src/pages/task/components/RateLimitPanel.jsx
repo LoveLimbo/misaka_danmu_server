@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { getRateLimitStatus } from '../../../apis/index.js'
-import MyIcon from '@/components/MyIcon'
+import { MyIcon } from '@/components/MyIcon'
 import {
   Card,
   Table,
@@ -102,7 +102,7 @@ export const RateLimitPanel = () => {
             <Row gutter={16} className="!mb-6">
               {/* 左侧卡片 - 弹幕下载流控 */}
               <Col xs={24} lg={12}>
-                <Card type="inner" title={<span><MyIcon icon="liukong" size={16} style={{ marginRight: 6 }} />弹幕下载流控</span>} className={status.verificationFailed ? 'opacity-50' : ''} style={{ height: '100%' }}>
+                <Card type="inner" title={<span><MyIcon icon="celve-cebiandaohang-liukongcelve" size={16} style={{ marginRight: 6 }} />弹幕下载流控</span>} className={status.verificationFailed ? 'opacity-50' : ''} style={{ height: '100%' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -135,7 +135,7 @@ export const RateLimitPanel = () => {
 
               {/* 右侧卡片 - 后备调用流控 */}
               <Col xs={24} lg={12}>
-                <Card type="inner" title={<span><MyIcon icon="qunfengzhinengliukong" size={16} style={{ marginRight: 6 }} />后备调用流控</span>} className={status.verificationFailed ? 'opacity-50' : ''} style={{ height: '100%' }}>
+                <Card type="inner" title={<span><MyIcon icon="liukongcelvefuwubeifen" size={16} style={{ marginRight: 6 }} />后备调用流控</span>} className={status.verificationFailed ? 'opacity-50' : ''} style={{ height: '100%' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
