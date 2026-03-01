@@ -438,56 +438,82 @@ export const IncrementalRefreshModal = ({ open, onCancel, onSuccess }) => {
 
   // 渲染源列表项
   const renderSourceItem = (source, animeTitle) => (
-    <div key={source.sourceId} className="source-item flex items-center gap-4 py-3 px-4 rounded-lg border-b border-gray-100 dark:border-gray-700 last:border-b-0 hover:bg-gray-100 dark:hover:bg-gray-700">
-      <Checkbox
-        checked={selectedSourceIds.includes(source.sourceId)}
-        onChange={(e) => handleCheckboxChange(source.sourceId, e.target.checked)}
-      />
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-medium">{source.providerName}</span>
-          <Tag color="blue" size="small">当前 第{source.episodeCount}集</Tag>
-          {source.incrementalRefreshEnabled && (
-            <>
-              <Tag color="green" size="small">追更中</Tag>
-              <Tag color={source.incrementalRefreshFailures > 0 ? 'error' : 'default'} size="small">
-                失败 {source.incrementalRefreshFailures}/{stats.maxFailures}
-              </Tag>
-            </>
-          )}
-          {source.isFavorited && (
-            <Tag color="gold" size="small">★ 已标记</Tag>
-          )}
-          {source.isFinished && (
-            <Tag color="default" size="small">已完结</Tag>
+    <div key={source.sourceId} className="source-item flex flex-col gap-2 py-3 px-4 rounded-lg border-b border-gray-100 dark:border-gray-700 last:border-b-0 hover:bg-gray-100 dark:hover:bg-gray-700">
+      <div className="flex items-center gap-4">
+        <Checkbox
+          checked={selectedSourceIds.includes(source.sourceId)}
+          onChange={(e) => handleCheckboxChange(source.sourceId, e.target.checked)}
+        />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-medium">{source.providerName}</span>
+            <Tag color="blue" size="small">当前 第{source.episodeCount}集</Tag>
+            {source.incrementalRefreshEnabled && (
+              <>
+                <Tag color="green" size="small">追更中</Tag>
+                <Tag color={source.incrementalRefreshFailures > 0 ? 'error' : 'default'} size="small">
+                  失败 {source.incrementalRefreshFailures}/{stats.maxFailures}
+                </Tag>
+              </>
+            )}
+            {source.isFavorited && (
+              <Tag color="gold" size="small">★ 已标记</Tag>
+            )}
+            {source.isFinished && (
+              <Tag color="default" size="small">已完结</Tag>
+            )}
+          </div>
+          {source.lastRefreshLatestEpisodeAt && (
+            <div className="text-xs text-gray-400 mt-1">
+              上次追更：{dayjs(source.lastRefreshLatestEpisodeAt).format('YYYY-MM-DD HH:mm')}
+            </div>
           )}
         </div>
-        {source.lastRefreshLatestEpisodeAt && (
-          <div className="text-xs text-gray-400 mt-1">
-            上次追更：{dayjs(source.lastRefreshLatestEpisodeAt).format('YYYY-MM-DD HH:mm')}
-          </div>
+        {!isMobile && (
+          <Space size="small">
+            <Switch
+              checkedChildren="追更"
+              unCheckedChildren="追更"
+              checked={source.incrementalRefreshEnabled}
+              onChange={() => handleToggleRefresh(source.sourceId)}
+            />
+            <Switch
+              checkedChildren="标记"
+              unCheckedChildren="标记"
+              checked={source.isFavorited}
+              onChange={() => handleToggleFavorite(source.sourceId)}
+            />
+            <Switch
+              checkedChildren="完结"
+              unCheckedChildren="完结"
+              checked={source.isFinished}
+              onChange={() => handleToggleFinished(source.sourceId)}
+            />
+          </Space>
         )}
       </div>
-      <Space size="small">
-        <Switch
-          checkedChildren="追更"
-          unCheckedChildren="追更"
-          checked={source.incrementalRefreshEnabled}
-          onChange={() => handleToggleRefresh(source.sourceId)}
-        />
-        <Switch
-          checkedChildren="标记"
-          unCheckedChildren="标记"
-          checked={source.isFavorited}
-          onChange={() => handleToggleFavorite(source.sourceId)}
-        />
-        <Switch
-          checkedChildren="完结"
-          unCheckedChildren="完结"
-          checked={source.isFinished}
-          onChange={() => handleToggleFinished(source.sourceId)}
-        />
-      </Space>
+      {isMobile && (
+        <div className="flex gap-3 pl-8">
+          <Switch
+            checkedChildren="追更"
+            unCheckedChildren="追更"
+            checked={source.incrementalRefreshEnabled}
+            onChange={() => handleToggleRefresh(source.sourceId)}
+          />
+          <Switch
+            checkedChildren="标记"
+            unCheckedChildren="标记"
+            checked={source.isFavorited}
+            onChange={() => handleToggleFavorite(source.sourceId)}
+          />
+          <Switch
+            checkedChildren="完结"
+            unCheckedChildren="完结"
+            checked={source.isFinished}
+            onChange={() => handleToggleFinished(source.sourceId)}
+          />
+        </div>
+      )}
     </div>
   )
 
